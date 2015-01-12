@@ -1,20 +1,12 @@
 package goblindungeon;
 
-import java.util.ArrayList;
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
 /**
- * The Output class produces the screen output of the game, being called by the
- * main Game class. Although these methods could be located in Game, it reduces
- * the size of that class and provides easy editing capabilities to add new 
- * content, e.g. if we wanted to randomly vary descriptions or add new languages.
- * This class does not care or have access to the current game state, or any 
- * rooms/enemies/items; String descriptions of these are provided to it.
- * 
- * This abstraction also ensures easy extensibility if, e.g. we wanted a GUI.
- * 
- * Like Game, it is also static as only one output is needed.
- * @author Miles
+ * The Output class provides the Strings required for many of the games dialogs
+ * to keep the user informed of progress and choose options when required. Most
+ * methods are split into Message() and Title() variants to provide appropriate
+ * arguments for the dialogs - for option dialogs, a Buttons() method is also 
+ * provided to supply text for the buttons.
+ * @author Miles Bryant
  */
 public class Output {
     
@@ -26,199 +18,184 @@ public class Output {
      */
     
     /**
-     * Prints the first message of the game.
-     * @param startingRoomDescription Long description of the first room.
+     * @return the welcome message.
      */
-    public static void printWelcome(String startingRoomDescription) {
-        if(startingRoomDescription.isEmpty()) //we need a starting room!
-            throw new ValueException("Starting room description not provided.");
-        
-        System.out.println();
-        System.out.println("Welcome to the Goblin Dungeon!");
-        System.out.println("You have come here after hearing rumours of vast");
-        System.out.println("treasures lurking deep in this terrible fortress");
-        System.out.println("Type '" + CommandWord.HELP + "' if you need help.");
-        System.out.println();
-        printGameDesc(startingRoomDescription,Data.MAX_PLAYER_HEALTH);
+    public static String startMessage() {
+        StringBuilder startmsg = new StringBuilder();
+        startmsg.append("Welcome to the Goblin Dungeon!\n\n");
+        startmsg.append("You have come here after hearing rumours of vast ");
+        startmsg.append("treasures lurking deep in this terrible fortress.\n\n");
+        startmsg.append("For help, click the ? in the bottom right.\n\n");
+        startmsg.append("Click 'OK' to start!");
+        return startmsg.toString();
     }
+    /**
+     * @return title for the welcome dialog.
+     */
+    public static String startTitle() { return "Welcome!"; }
     
     /**
-     * Prints a description for the current room.
-     * @param roomDesc Description of current room.
-     * @param health HP of player.
+     * @return a win message.
      */
-    public static void printGameDesc(String roomDesc, int health) {
-        System.out.println(roomDesc);
-        printHP(health);
+    public static String winMessage() { 
+        return ("Congratulations, you found the treasure!");
     }
-    
-    
-    public static void printUnknownCommand() {
-        System.out.println("I don't know what you mean...");
-    }
-    
     /**
-     * Prints a message when the player reaches the goal room.
+     * @return title for the win dialog.
      */
-    public static void printWinMessage() {
-        System.out.println("Congratulations, you found the treasure!");
-    }
-    
+    public static String winTitle() { return "You won!"; }
     /**
-     * Print out a message if the player quits the game before it is finished.
+     * @return button texts for the win dialog.
      */
-    public static void printQuit() {
-        System.out.println();
-        System.out.println("Thanks for playing.");
+    public static Object[] winButtons() {
+        final Object[] options = {"Play again","Quit"};
+        return options;
     }
-    
     /**
-     * Prints a message if the player types anything after 'quit'.
+     * @return message for when the player flees a battle.
      */
-    public static void printQuitWhat() {
-        System.out.println("Quit what?");
-    }
-    
-    /**
-     * Print out some help information.
-     * @param commandWords String containing list of commands, from the parser, 
-     * e.g. "MOVE QUIT HELP".
-     */
-    public static void printHelp(String commandWords) 
-    {
-        System.out.println("You are a goblin in a dungeon. Your task is to ");
-        System.out.println("find the room with the treasure.");
-        System.out.println();
-        System.out.println("You will encounter fearsome foes along the way.");
-        System.out.println("Pick up weapons to counter these enemies and minimise damage.");
-        System.out.println();
-        System.out.println("But be careful, if you lose all your HP you will die!");
-        System.out.println();
-        System.out.println("Type items to show all the items you are holding.");
-        System.out.println("To use a health pack, type use health.");
-        System.out.println();
-        System.out.println("Your command words are:");
-        System.out.println(commandWords);
-    }
-    
-    /**
-     *
-     */
-    public static void printMaxHealth() {
-        System.out.println("You might want to save that health!");
-    }
-    
-    /**
-     *
-     * @param healing
-     */
-    public static void printUsedHealth(String healing) {
-        System.out.println("You healed " + healing + "HP.");
-    }
-    
-    /**
-     *
-     * @param itemname
-     */
-    public static void printUseItem(String itemname) {
-        System.out.println("You used " + itemname);
-    }
-    
-    /**
-     *
-     */
-    public static void printNoItems() {
-        System.out.println("You have no items...");
-    }
-    
-    /**
-     *
-     * @param itemcmd
-     */
-    public static void printDoesntHaveItem(String itemcmd) {
-        System.out.println("You do not have " + itemcmd + "!");
-    }
-    
-    /**
-     *
-     * @param weaponname
-     */
-    public static void printCantUseWeapon(String weaponname) {
-        System.out.println("You swing the " + weaponname + " around wildly; "
-                + "best save your energy for real foes!");
-    }
-
-    static void printHP(int HP) {
-        System.out.println("Health: " + String.valueOf(HP));
-    }
-    
-    static void printInventory(ArrayList<Item> items) {
-        if(items.isEmpty()) {
-            System.out.println("You have no items. Explore some more rooms "
-                    + "to find some!");
-        } else {
-            System.out.println("Inventory: ");
-            for(Item item : items) {
-                System.out.println(item.toString());
-            }
-        }
-        
-    }
-
-    static void printNothingToFight() {
-        System.out.println("There is nothing to fight!");
-    }
-
-    static void printFlee() {
-        System.out.println("You scurry back to the previous room as"
+    public static String fleeMessage() {
+        return ("You scurry back to the previous room as"
                     + " fast as you can. Phew, that was a close one!");
     }
-
-    static void printNothingToFlee() {
-        System.out.println("There is nothing to flee from, have courage!");
+    /**
+     * @return title for the dialog when player flees a battle.
+     */
+    public static String fleeTitle() { return "Fleeing"; }
+    
+    /**
+     * @return a message informing player they cannot use a health item because
+     * they already have full HP.
+     */
+    public static String maxHealthMessage() {
+        return "You already have maximum health - might want to save that!";
     }
-
-    static void printMustFightOrFlee(String enemyname) {
-        System.out.println("You must fight or flee the " + enemyname + "!");
+    /**
+     * @return title for the dialog informing player they cannot use a health item
+     * because they already have full HP.
+     */
+    public static String maxHealthTitle(){ return "Maximum health"; }
+    /**
+     * Returns a String message for the dialog informing player of how much HP they healed.
+     * @param healing Int amount of HP the player healed when using a health item.
+     * @return String for the dialog informing player of how much HP they healed.
+     */
+    public static String healedMessage(int healing) {
+        return "You healed " + healing + "HP!";
     }
-
-    static void printDontKnowWhereToGo() {
-        System.out.println("Go where?");
+    /**
+     * @return title for the dialog informing player of how much HP they healed.
+     */
+    public static String healedTitle() {
+        return "Healed";
     }
-
-    static void printNoExit() {
-        System.out.println("There is no door!");
+    
+    /**
+     * Returns a String message for the dialog informing player of an item they found.
+     * @param name String name of the item.
+     * @param desc String description of the item.
+     * @return String message.
+     */
+    public static String foundItemMessage(String name, String desc) {
+        return ("You found " + name + ":\n\n" + desc);
     }
-
-    static void printFoundItem(String item) {
-        System.out.println("You found " + item);
-    }
-
-    static void printStartFight(String enemyname) {
-        System.out.println("A wild " + enemyname + " has"
+    /**
+     * @return a String title for the dialog informing player of an item they found.
+     */
+    public static String foundItemTitle() { return "Found an item!"; }
+    /**
+     * Returns a String message for the dialog informing player when they encounter
+     * an enemy.
+     * @param enemyname Name of the enemy, e.g. troll.
+     * @return String message.
+     */
+    public static String startFightMessage(String enemyname) {
+        return ("A wild " + enemyname + " has"
                         + " appeared! You must either flee to the previous room or fight!");
     }
-    
-    static void printFight(String enemyname) {
-        System.out.println("You try to wrestle the " + enemyname + ""
+    /**
+     * @return a String title for the dialog informing player when they encounter
+     * an enemy.
+     */
+    public static String startFightTitle() {
+        return ("Fight!");
+    }
+    /**
+     * @return an Object array of Strings containing button texts for the start Fight dialog.
+     */
+    public static Object[] startFightButtons() {
+        final Object[] options = {"Fight!","Flee!"};
+        return options;
+    }
+    /**
+     * @return String title for the dialog of when a player decides to fight.
+     */
+    public static String fightTitle() {
+        return "Fighting...";
+    }
+    /**
+     * Returns a String message for the dialog when a player decides to fight with
+     * no weapons, i.e. bare hands.
+     * @param enemyname Name of enemy
+     * @return String message.
+     */
+    public static String fightMessage(String enemyname) {
+        return ("You try to wrestle the " + enemyname + ""
                     + " with your bare hands.");
     }
-    
-    static void printFight(String enemyname, String weaponname) {
-        System.out.println("You try to slay the " + enemyname + ""
+    /**
+     * Returns a String message for the dialog when a player decides to fight
+     * with a weapon.
+     * @param enemyname Name of enemy.
+     * @param weaponname Name of weapon.
+     * @return String message.
+     */
+    public static String fightMessage(String enemyname, String weaponname) {
+        return ("You try to slay the " + enemyname + ""
                     + " with your " + weaponname + ".");
     }
     
-    static void printKillEnemy(String enemyname, String damage) {
-        System.out.println("You manage to kill the " + enemyname + ", "
+    /**
+     * Returns a String message for the dialog when a player defeats an enemy.
+     * @param enemyname Name of enemy.
+     * @param damage Damage done to the player's HP.
+     * @return String message.
+     */
+    public static String killEnemyMessage(String enemyname, String damage) {
+        return ("You manage to kill the " + enemyname + ", "
                     + "but it does " + damage + "damage!");
-    }
+    }    
+    /**
+     * @return String title for the dialog when a player defeats an enemy.
+     */
+    public static String killEnemyTitle() { return "Killed enemy!"; }
     
-    static void printPlayerKilled(String enemyname, String damage) {
-        System.out.println(
+    /**
+     * returns a String message for the dialog when a player is killed by an enemy.
+     * @param enemyname Name of enemy.
+     * @param damage Damage done to player.
+     * @return String message.
+     */
+    public static String playerKilledMessage(String enemyname, String damage) {
+        return(
                     "You are brutally dismembered by the " + enemyname
                     + " (doing " + damage + " damage), and your body lies on the ground as a warning to"
                             + " future adventurers!"
             );
     }
+    /**
+     * @return String title for the dialog when a player is killed by an enemy.
+     */
+    public static String playerKilledTitle() {
+        return "Killed in action!";
+    }
+    /**
+     * @return Object array of Strings for button text of the dialog when a 
+     * player is killed by an enemy.
+     */
+    public static Object[] playerKilledOptions() {
+        Object[] options = {"Play again", "Quit"};
+        return options;
+    }
+    
 }

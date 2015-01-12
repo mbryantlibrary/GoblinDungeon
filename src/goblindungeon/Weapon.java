@@ -19,21 +19,13 @@ public class Weapon extends Item {
      * @param rarity the likelihood of this item being in a room 
      * (0.0 never appears - 1.0 always appears)
      * @param damage the effect this weapon has on a battle. Higher damage will 
-     * lead to greater success and less HP lost per battle.
+     * lead to greater success and less HP lost per battle. Between 0 and 100.
      */
     public Weapon(String name, String description, String usecommand, float rarity, int damage) {
         super(name,description + " does " + String.valueOf(damage) + " damage.",usecommand,rarity);
+        if(damage < 0 | damage > 100)
+            throw new IllegalArgumentException("Damage " + damage + " is not between 0 and 100.");
         this.damage = damage;
-    }
-
-    /**
-     * This happens when a player tries to use a weapon.
-     * @return Always returns false as the weapon should be kept.
-     */
-    @Override
-    public boolean doEffect() {
-        Output.printCantUseWeapon(name);
-        return false;
     }
 
     /**

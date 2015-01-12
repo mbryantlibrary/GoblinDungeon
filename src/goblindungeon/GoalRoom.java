@@ -5,14 +5,16 @@
  */
 package goblindungeon;
 
+import java.awt.image.BufferedImage;
+
 /**
  *
  * @author Miles
  */
 public class GoalRoom extends Room {
 
-    public GoalRoom(String description) {
-        super(description);
+    public GoalRoom(String description, BufferedImage image) {
+        super(description,image);
         item = null;
         enemy = null;
     }

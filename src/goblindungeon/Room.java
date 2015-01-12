@@ -1,5 +1,6 @@
 package goblindungeon;
 
+import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Random;
@@ -27,11 +28,16 @@ public class Room
     
     private final String description;
     private final HashMap<Directions, Room> exits; // stores exits of this room.
+    private final BufferedImage image; //image used in UI to show this room
     
     //the item this room contains. Set to null if this room has no item.
     protected Item item; 
     //likewise, with enemy.
     protected Enemy enemy;
+
+    public BufferedImage getImage() {
+        return image;
+    }
 
     /**
      * Create a room described "description". Initially, it has
@@ -40,17 +46,22 @@ public class Room
      * Data.P_ITEMINROOM), and if not an enemy may be randomly added
      * (according to Data.P_ENEMYINROOM).
      * @param description The room's description.
+     * @param image BufferedImage to be displayed in UI. Will be resized to fit.
      */
-    public Room(String description) {
+    public Room(String description, BufferedImage image) {
         this.description = description;
         exits = new HashMap<>();
         Random rand = new Random();
         
-        if(rand.nextFloat()< Data.P_ITEMINROOM) {
-            item = Data.getRandomItem(); //if this room has an item, add a random one
+        if(rand.nextBoolean()) {
+            if(rand.nextFloat()< Data.P_ITEMINROOM) {
+                item = Data.getRandomItem(); //if this room has an item, add a random one
+            } 
         } else if(rand.nextFloat() < Data.P_ENEMYINROOM) {
             enemy = Data.getRandomEnemy();
         }
+        
+        this.image = image;
     }
     
     /**
@@ -126,22 +137,7 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + "\n" + getExitString();
-    }
-
-    /**
-     * Return a string describing the room's exits, for example
-     * "Exits: north west".
-     * @return Details of the room's exits.
-     */
-    private String getExitString()
-    {
-        String returnString = "Exits:";
-        Set<Directions> keys = exits.keySet();
-        for(Directions exit : keys) {
-            returnString += " " + exit.name();
-        }
-        return returnString;
+        return "You are " + description + "\n";
     }
 
     /**

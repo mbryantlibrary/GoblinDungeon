@@ -20,8 +20,7 @@ public class Health extends Item {
     public Health(String name, String description, String usecommand, float rarity, int healing) {
         super(
                 name,
-                description + " Heals " + String.valueOf(healing) + "HP." 
-                        + "\n" + "Type " + usecommand + " to use.",
+                description + " Heals " + String.valueOf(healing) + "HP.",
                 usecommand,
                 rarity
         );
@@ -30,17 +29,6 @@ public class Health extends Item {
     
     private int healing = 0;
     
-    /**
-     * Use this health pack, healing the player's HP.
-     * @return
-     */
-    @Override
-    public boolean doEffect() {
-        if(Game.player.addHP(healing)) {
-            Output.printUsedHealth(String.valueOf(healing));
-        }
-        return false;
-    }
     
     /**
      * @return the amount of HP added to the player's health when this 

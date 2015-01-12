@@ -11,8 +11,6 @@ import java.util.ArrayList;
  */
 public class Player {
     
-    //number of lives the player has. The player dies when this reaches 0. TODO: implement lives
-    private int lives = 1; 
     //amount of health this player has. The player loses a life when this reaches 0.
     private int HP = Data.MAX_PLAYER_HEALTH;
     //current items this player is holding.
@@ -33,6 +31,18 @@ public class Player {
      */
     void addItem(Item item) {
         items.add(item);
+    }
+    
+    Item getItem(int ID) {
+        return items.get(ID);
+    }
+    
+    void removeItem(Item item) {
+        items.remove(item);
+    }
+    
+    int getNumberOfItems() {
+        return getItems().size();
     }
     
     /**
@@ -59,26 +69,28 @@ public class Player {
     /**
      * @return the current HP of the player.
      */
-    public int getHP() {
-        return HP;
-    }
+    public int getHP() { return HP; }
 
     /**
      * @param HP the HP to add
      * @return whether HP was successfully added
      */
-    public boolean addHP(int HP) {
+    public int addHP(int HP) {
+        if(HP < 0)
+            throw new IllegalArgumentException("HP " + HP + " must be positive.");
         if(this.HP == Data.MAX_PLAYER_HEALTH) {
             //player already at maximum health, let's warn them not to waste 
             //health packs!
-            Output.printMaxHealth();
-            return false;
+            return 0;
         } 
-        this.HP += HP;
-        if(this.HP > Data.MAX_PLAYER_HEALTH)
+        if(this.HP + HP > Data.MAX_PLAYER_HEALTH) {
             //make sure maximum health hasn't been exceeded
+            int healedAmount = Data.MAX_PLAYER_HEALTH - this.HP;
             this.HP = Data.MAX_PLAYER_HEALTH;
-        return true;
+            return healedAmount;            
+        }
+        this.HP += HP;
+        return HP;
     }
     
     /**
@@ -87,33 +99,20 @@ public class Player {
      * @return whether player is dead
      */
     public boolean removeHP(int HP) {
+        if(HP < 0)
+            throw new IllegalArgumentException("HP " + HP + " must be positive.");
         if(this.HP == 0)
             throw new RuntimeException("Player is already dead, cannot remove HP!");
         this.HP -= HP;
         return this.HP > 0;
     }
     
+
     /**
-     * Uses an item in the player's inventory.
-     * @param itemCmd the useCommand of the Item to use.
+     * Clears player data, e.g. if game is restarted.
      */
-    public void useItem(String itemCmd) {
-        if(getItems().isEmpty()) {
-            // cannot use any items since we don't have any!
-            Output.printNoItems();
-            return;
-        }
-        //loop through items and see if any of them match the use command
-        for(Item item : getItems()) {
-            if(itemCmd.equals(item.getUseCommand())) {
-                if(item.doEffect()) //if item gets used up, remove it
-                    getItems().remove(item);
-                Output.printUseItem(item.getName());
-                return; //found the item and used it, let's stop processing
-            }
-        }
-        //went through all the items and didn't find it, so player doesn't have it
-        Output.printDoesntHaveItem(itemCmd);
+    public void clear() {
+        items.clear(); HP = Data.MAX_PLAYER_HEALTH;
     }
     
     

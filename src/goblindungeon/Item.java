@@ -10,7 +10,6 @@ package goblindungeon;
 abstract class Item extends GameObject {
     private String usecommand = "";
     
-    public abstract boolean doEffect();
     /**
      * Creates a new Item with the specified attributes. Can only be accessed
      * from subclasses.
