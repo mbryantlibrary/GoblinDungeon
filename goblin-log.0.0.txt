@@ -1,0 +1,24 @@
+Jan 14, 2015 2:01:41 PM goblindungeon.Game main
+INFO: Starting game...
+Jan 14, 2015 2:01:44 PM goblindungeon.Game initialise
+INFO: ...initialised.
+Jan 14, 2015 2:01:47 PM goblindungeon.Game doFight
+INFO: User selected 'Fight'
+Jan 14, 2015 2:01:50 PM goblindungeon.Game doFight
+INFO: User selected 'Fight'
+Jan 14, 2015 2:01:56 PM goblindungeon.Game doFight
+INFO: User selected 'Fight'
+Jan 14, 2015 2:02:03 PM goblindungeon.Game goRoom
+INFO: User exited after winning game.
+Jan 14, 2015 2:03:24 PM goblindungeon.Game main
+INFO: Starting game...
+Jan 14, 2015 2:03:26 PM goblindungeon.Game initialise
+INFO: ...initialised.
+Jan 14, 2015 2:03:32 PM goblindungeon.Game doFight
+INFO: User selected 'Fight'
+Jan 14, 2015 2:03:37 PM goblindungeon.Game useHealth
+INFO: User is using health
+Jan 14, 2015 2:03:48 PM goblindungeon.Game initialise
+INFO: ...initialised.
+Jan 14, 2015 2:03:51 PM goblindungeon.Game doFight
+INFO: User selected 'Fight'

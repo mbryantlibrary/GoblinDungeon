@@ -1,6 +1,8 @@
 package goblindungeon;
 
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 
 /**
@@ -9,6 +11,7 @@ import javax.swing.AbstractAction;
  * @author Miles Bryant
  */
 public class MoveAction extends AbstractAction {
+    private static final Logger LOG = Logger.getLogger(MoveAction.class.getName());
 
     private final Directions dir; //direction user elects to move in
     
@@ -22,10 +25,13 @@ public class MoveAction extends AbstractAction {
      */
     public MoveAction(Directions dir) {
         this.dir = dir;
+        LOG.setLevel(Level.ALL);
     }
     
     @Override
     public void actionPerformed(ActionEvent ae) {
+        LOG.info(String.format("User moved %s", dir.name()));
         Game.getInstance().goRoom(dir);
+        
     }
 }

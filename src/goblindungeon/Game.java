@@ -3,8 +3,10 @@ package goblindungeon;
 import goblindungeon.ui.MainUI;
 import java.io.IOException;
 import java.util.Random;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,6 +21,8 @@ import javax.swing.JOptionPane;
 
 public class Game {
     
+    private static final Logger LOG = Logger.getLogger(Game.class.getName());
+    
     //STATIC FIELDS AND METHODS
     
     private static MainUI ui;
@@ -30,12 +34,16 @@ public class Game {
      */
     public static void main(String args[]) {
         try {
-        Game.getInstance().initialise();
+            FileHandler handler = new FileHandler("goblin-log.%u.%g.txt",1024*1024,3,true);
+            handler.setFormatter(new SimpleFormatter());
+            LOG.addHandler(handler);
+            LOG.setLevel(Level.ALL);
+            LOG.info("Starting game...");
+            Game.getInstance().initialise();
         } catch(Exception e) {
-            e.printStackTrace();
-            System.err.println(e.toString());
+            LOG.throwing("Game", "initialise",e);
             System.exit(1);
-        }
+        } 
     }
     
     /**
@@ -70,10 +78,8 @@ public class Game {
         
         Data.load();
         
-        ui = new MainUI();
-        
-        currentRoom = Data.getFirstRoom();
-        
+        ui = new MainUI();        
+        currentRoom = Data.getFirstRoom();        
         initialised = true;
         
         //Set up UI control buttons
@@ -91,7 +97,7 @@ public class Game {
         ui.setGameCommentary(currentRoom.getLongDescription());
         ui.setGameTitle("Health: " + player.getHP());
         ui.loadImage(currentRoom.getImage());
-        
+        LOG.info("...initialised.");
     }
     
     
@@ -120,9 +126,10 @@ public class Game {
                 restartGame();
             } else {
                 //User wants to exit; shut the game down
+                LOG.info("User exited after winning game.");
                 System.exit(0);
             }
-        } else {
+        } else {      
             //Just a normal room
             currentRoom = nextRoom;
             prevExit = direction; //in case player has to flee from a fight
@@ -166,7 +173,7 @@ public class Game {
      */
     public void useHealth(int ID) {
         checkInit();
-        
+        LOG.info("User is using health");
         Item item = player.getItem(ID);
         //Check if item is a health item; inappropriate to use it otherwise
         if(item.getClass() == Health.class) {
@@ -204,15 +211,18 @@ public class Game {
      * again
      */
     private void restartGame() {
+        LOG.info("User is restarting game.");
         //reset everything
         currentRoom = null; prevExit = null;
         initialised = false;
         player.clear();
         ui.clear();
+        ui.dispose();
+        ui = null;
         try {
             initialise();
         } catch (IOException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            LOG.log(Level.SEVERE, null, ex);
         }
     }
     
@@ -264,6 +274,7 @@ public class Game {
      * Performs a fight, informing user of progress.
      */
     private void doFight() {
+        LOG.info("User selected 'Fight'");
         //Get weapon and enemy.
         Weapon weap = player.getBestWeapon();
         Enemy enemy = currentRoom.getEnemy();
@@ -316,6 +327,7 @@ public class Game {
      * Performs a fleeing action, informing player and moving to previous room.
      */
     private void doFlee() {
+        LOG.info("User selected flee");
         goRoom(prevExit.getOpposite());
         ui.showInfoDialog(
             Output.fleeMessage(),
